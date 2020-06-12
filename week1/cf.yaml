@@ -1,0 +1,31 @@
+Resources:
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: test group
+      SecurityGroupIngress:
+      - CidrIp: 0.0.0.0/0
+        IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+      - CidrIp: 0.0.0.0/0
+        IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+  MyAutoScalingLaunchConfiguration:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      InstanceType: t2.micro
+      ImageId: 'ami-0323c3dd2da7fb37d'
+      SecurityGroups:
+      - Ref: MySecurityGroup
+      KeyName: test-key-pair
+  MyAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      LaunchConfigurationName:
+        Ref: "MyAutoScalingLaunchConfiguration"
+      AvailabilityZones:
+        Fn::GetAZs: ""
+      MaxSize: 2
+      MinSize: 2

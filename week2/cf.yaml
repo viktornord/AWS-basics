@@ -1,0 +1,56 @@
+Resources:
+  MyEc2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      KeyName: test-key-pair
+      ImageId: ami-0323c3dd2da7fb37d
+      SecurityGroups:
+        - Ref: MySecurityGroup
+      IamInstanceProfile:
+        Ref: MyInstanceProfile
+      UserData:
+        Fn::Base64:
+          !Sub |
+            #!/bin/bash -xe
+            cd /tmp
+            aws s3 cp s3://vurbanas-bucket/hello_world.txt hello_world.txt
+            chmod 644 hello_world.txt
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: test group
+      SecurityGroupIngress:
+      - CidrIp: 0.0.0.0/0
+        IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+  MyInstanceProfile: 
+    Type: AWS::IAM::InstanceProfile
+    Properties: 
+      Roles: 
+        - Ref: Ec2S3Read
+  Ec2S3Read:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - sts:AssumeRole
+  RolePolicies:
+    Type: AWS::IAM::Policy
+    Properties: 
+      PolicyName: ec2S3Read
+      PolicyDocument: 
+        Version: 2012-10-17
+        Statement: 
+          - Effect: Allow
+            Action: s3:Get*
+            Resource: arn:aws:s3:::vurbanas-bucket/*
+      Roles: 
+        - Ref: Ec2S3Read
