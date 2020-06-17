@@ -193,14 +193,13 @@ resource "aws_lb" "viktor_lb" {
   subnets = [aws_subnet.public_subnet.id, aws_subnet.private_subnet.id]
 }
 
-//
-//resource "aws_lb_listener" "viktor_lb_tg" {
-//  load_balancer_arn = aws_lb.viktor_lb.arn
-//  port = "80"
-//  protocol = "HTTP"
-//
-//  default_action {
-//    type = "forward"
-//    target_group_arn = aws_lb_target_group.viktor_lb_tg.arn
-//  }
-//}
+resource "aws_lb_listener" "viktor_lb_tg" {
+  load_balancer_arn = aws_lb.viktor_lb.arn
+  port = "80"
+  protocol = "HTTP"
+
+  default_action {
+    type = "forward"
+    target_group_arn = aws_lb_target_group.viktor_lb_tg.arn
+  }
+}
