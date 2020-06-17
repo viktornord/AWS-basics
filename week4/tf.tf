@@ -186,10 +186,28 @@ resource "aws_lb_target_group_attachment" "viktor_lb_t_public" {
   port = 80
 }
 
+resource "aws_security_group" "lb_security_group" {
+  name = "lb security group"
+  ingress {
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    description = "HTTP access"
+  }
+  egress {
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+  }
+}
+
 resource "aws_lb" "viktor_lb" {
   name = "viktorLb"
   internal  = false
   load_balancer_type = "application"
+  security_groups    = [aws_security_group.lb_security_group.id]
   subnets = [aws_subnet.public_subnet.id, aws_subnet.private_subnet.id]
 }
 
