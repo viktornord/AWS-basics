@@ -7,5 +7,5 @@ chmod -R 644 scripts
 cd scripts
 mkdir /root/.aws/
 echo $'[default]\nregion = us-east-1' > /root/.aws/config
-cat rds-script.sql | psql postgres://qwerty:qwerty123456@terraform-20200618185024582800000001.cb3bg3hfcyci.us-east-1.rds.amazonaws.com:5432/postgres > rds.log
 bash dynamodb-script.sh > dynamo.log
+cat rds-script.sql | psql postgres://qwerty:qwerty123456@terraform-20200618185024582800000001.cb3bg3hfcyci.us-east-1.rds.amazonaws.com:5432/postgres > rds.log
