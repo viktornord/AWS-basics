@@ -18,6 +18,15 @@ resource "aws_security_group" "my_security_group" {
      protocol = "-1"
   }
 }
+resource "aws_security_group" "db_security_group" {
+  name = "db security group"
+  ingress {
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port = 5432
+    to_port = 5432
+    protocol = "tcp"
+  }
+}
 
 resource "aws_instance" "my_ec2_instance" {
   ami = "ami-0323c3dd2da7fb37d"
@@ -51,6 +60,8 @@ resource "aws_db_instance" "my_db_instance" {
   username = "qwerty"
   password = "qwerty123456"
   skip_final_snapshot = true
+  publicly_accessible = true
+  vpc_security_group_ids = [aws_security_group.db_security_group.id]
 }
 
 resource "aws_iam_role" "my_iam_role" {
@@ -104,11 +115,11 @@ data "aws_iam_policy_document" "ec2_to_access_dynamo_policy" {
   statement {
     effect = "Allow"
     actions   = ["dynamodb:Query", "dynamodb:Scan", "dynamodb:BatchWriteItem"]
-    resources = ["arn:aws:dynamodb:us-east-1:065729329951:table/testdb/index/*"]
+    resources = ["arn:aws:dynamodb:us-east-1:*:table/testdb"]
   }
   statement {
     effect = "Allow"
     actions   = ["dynamodb:ListTables"]
-    resources = ["arn:aws:dynamodb:us-east-1:065729329951:table/testdb"]
+    resources = ["arn:aws:dynamodb:us-east-1:*:*"]
   }
 }
