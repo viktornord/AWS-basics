@@ -34,6 +34,8 @@ resource "aws_subnet" "private_subnet" {
   availability_zone = "us-east-1a"
 }
 
+
+
 output "public_subnet_id" {
   value = aws_subnet.public_subnet.id
 }

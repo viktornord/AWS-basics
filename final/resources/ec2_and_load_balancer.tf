@@ -1,8 +1,8 @@
 module "vpc" {
-  source = "../vpc"
+  source = "./vpc"
 }
 module "iam" {
-  source = "../iam"
+  source = "./iam"
 }
 
 //-----------------------       EC2      ---------------------------------
@@ -15,7 +15,7 @@ resource "aws_launch_configuration" "aws_linux" {
   key_name = "test-key-pair"
   security_groups    = [aws_security_group.ssh_and_web_4_public.id]
   iam_instance_profile = aws_iam_instance_profile.viktor_instance_profile.name
-  user_data = file("ec2/user_data_public.sh")
+  user_data = file("resources/user_data_public.sh")
 }
 resource "aws_autoscaling_group" "public_auto_scaling_group" {
   launch_configuration = aws_launch_configuration.aws_linux.name
@@ -96,7 +96,7 @@ resource "aws_instance" "viktor_private_ec2" {
   }
   iam_instance_profile = aws_iam_instance_profile.viktor_instance_profile.name
   vpc_security_group_ids = [aws_security_group.ssh_and_web_4_private.id]
-  user_data = file("ec2/user_data_private.sh")
+  user_data = file("resources/user_data_private.sh")
 }
 
 resource "aws_iam_instance_profile" "viktor_instance_profile" {
