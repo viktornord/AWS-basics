@@ -49,7 +49,7 @@ resource "aws_security_group" "ssh_and_web_4_public" {
     protocol = "-1"
   }
   ingress {
-    cidr_blocks = [module.vpc.private_subnet_id]
+    cidr_blocks = [module.vpc.private_subnet_cidr]
     from_port = 0
     to_port = 0
     protocol = "-1"
