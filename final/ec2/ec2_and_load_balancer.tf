@@ -1,6 +1,9 @@
 module "vpc" {
   source = "../vpc"
 }
+module "iam" {
+  source = "../iam"
+}
 
 //-----------------------       EC2      ---------------------------------
 
@@ -10,8 +13,9 @@ resource "aws_launch_configuration" "aws_linux" {
   image_id = "ami-0323c3dd2da7fb37d"
   //  security_groups = []
   key_name = "test-key-pair"
-  user_data = file("./user_data_public.sh")
   security_groups    = [aws_security_group.ssh_and_web_4_public.id]
+  iam_instance_profile = aws_iam_instance_profile.viktor_instance_profile.name
+  user_data = file("ec2/user_data_public.sh")
 }
 resource "aws_autoscaling_group" "public_auto_scaling_group" {
   launch_configuration = aws_launch_configuration.aws_linux.name
@@ -40,6 +44,12 @@ resource "aws_security_group" "ssh_and_web_4_public" {
   }
   egress {
     cidr_blocks = ["0.0.0.0/0"]
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+  }
+  ingress {
+    cidr_blocks = [module.vpc.private_subnet_id]
     from_port = 0
     to_port = 0
     protocol = "-1"
@@ -84,6 +94,14 @@ resource "aws_instance" "viktor_private_ec2" {
   tags = {
     Name = "viktor_private_ec2"
   }
+  iam_instance_profile = aws_iam_instance_profile.viktor_instance_profile.name
+  vpc_security_group_ids = [aws_security_group.ssh_and_web_4_private.id]
+  user_data = file("ec2/user_data_private.sh")
+}
+
+resource "aws_iam_instance_profile" "viktor_instance_profile" {
+  name = "viktor_instance_profile"
+  role = module.iam.ec2_role
 }
 
 //-----------------------       LB      ---------------------------------
@@ -112,7 +130,7 @@ resource "aws_alb" "viktor_lb" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.lb_security_group.id]
   // why should i specify both subnets? At least two subnets in two different Availability Zones must be specified
-  subnets = [module.vpc.public_subnet_id, module.vpc.private_subnet_id]
+  subnets = [module.vpc.public_subnet_id, module.vpc.public_subnet2_id]
 }
 
 

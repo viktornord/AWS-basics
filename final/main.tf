@@ -5,10 +5,10 @@ provider "aws" {
 module "ec2" {
   source = "./ec2"
 }
-//
-//module "s3" {
-//  source = "./s3"
-//}
+
+module "dynamo" {
+  source = "./dynamo"
+}
 
 resource "aws_sns_topic" "vikto_topic" {
   name = "edu-lohika-training-aws-sns-topic"
@@ -16,4 +16,9 @@ resource "aws_sns_topic" "vikto_topic" {
 
 resource "aws_sqs_queue" "viktor_queue" {
   name = "edu-lohika-training-aws-sqs-queue"
+}
+
+resource "aws_s3_bucket" "viktor_bucket" {
+  bucket = "vurbanas-bucket"
+  acl    = "private"
 }
