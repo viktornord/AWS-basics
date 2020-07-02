@@ -19,6 +19,7 @@ resource "aws_db_subnet_group" "my_db_subnet_group" {
 }
 
 resource "aws_db_instance" "my_db_instance" {
+  identifier = "viktor-db"
   allocated_storage = 20
   storage_type = "gp2"
   engine = "postgres"
