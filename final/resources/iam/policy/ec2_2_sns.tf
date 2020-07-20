@@ -16,6 +16,7 @@ data "aws_iam_policy_document" "ec2_to_access_sns_policy" {
   statement {
     effect = "Allow"
     actions   = [
+      "sns:CreateTopic",
       "sns:ListTopics",
       "sns:Unsubscribe",
       "sns:ListSubscriptions",

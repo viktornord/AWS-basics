@@ -6,7 +6,13 @@ resource "aws_iam_policy" "ec2_to_access_dynamo_role_policy" {
 data "aws_iam_policy_document" "ec2_to_access_dynamo_policy" {
   statement {
     effect = "Allow"
-    actions   = ["dynamodb:Query", "dynamodb:Scan", "dynamodb:BatchWriteItem"]
+    actions   = [
+      "dynamodb:Query",
+      "dynamodb:Scan",
+      "dynamodb:BatchWriteItem",
+      "dynamodb:GetItem",
+      "dynamodb:PutItem"
+    ]
     resources = ["arn:aws:dynamodb:us-east-1:*:table/edu-lohika-training-aws-dynamodb"]
   }
   statement {
